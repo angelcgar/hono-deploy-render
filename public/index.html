@@ -102,10 +102,10 @@
             </div>
             <div class="url-short">
               <div class="url-short-content">
-                <a href="/${url.short_code}" target="_blank">
+                <a href="/${url.short_code}" target="_blank" rel="noopener noreferrer">
                   ${window.location.origin}/${url.short_code}
                 </a>
-                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" onclick="copyURLToClipboard('${window.location.origin}/${url.short_code}', this)" title="Copiar URL">
+                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" onclick="copyURLToClipboard('${window.location.origin}/${url.short_code}', this)" role="button" aria-label="Copiar URL al portapapeles" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){copyURLToClipboard('${window.location.origin}/${url.short_code}', this); event.preventDefault();}">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                 </svg>

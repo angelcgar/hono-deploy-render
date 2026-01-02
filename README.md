@@ -29,12 +29,15 @@ Acortador de URLs simple y funcional construido con Bun, Hono.js y SQLite.
 
 ✅ Acorta URLs largas en códigos de 6 caracteres
 ✅ Almacenamiento persistente en SQLite
-✅ Interfaz web responsive con **dark mode moderno**
+✅ **Tema oscuro/claro automático** según preferencias del sistema
+✅ **UI accesible** (WCAG AA, navegación por teclado, ARIA)
+✅ **Diseño responsivo** mobile-first
 ✅ Lista de URLs creadas en tiempo real
 ✅ **Icono de copiar junto a cada URL** con feedback visual
 ✅ Redirección automática
 ✅ Validación de URLs
-✅ **Variables de entorno** para PORT y BASE_URL## 🛠️ Instalación y Ejecución
+✅ **Variables de entorno** para PORT y BASE_URL
+✅ **Respeta `prefers-reduced-motion`** para accesibilidad## 🛠️ Instalación y Ejecución
 
 ### Prerrequisitos
 
@@ -155,16 +158,40 @@ La UI incluye un **diseño dark mode moderno** con:
 - **Lista**: Muestra todas las URLs creadas con:
   - URL original
   - URL acortada (clickeable)
-  - **Icono SVG para copiar** cada URL individualmente
+  - **Icono SVG para copiar** cada URL individualmente (accesible por teclado)
   - Fecha de creación
 
-### Paleta de colores (Dark Mode)
+### Sistema de Temas
+- **Automático**: Detecta preferencias del sistema (`prefers-color-scheme`)
+- **Tema oscuro**: Por defecto, colores optimizados para bajo contraste lumínico
+- **Tema claro**: Se activa automáticamente si el sistema está en modo claro
+- Sin JavaScript, solo CSS
+
+### Paleta de colores
+**Tema Oscuro:**
 - Fondo principal: `#0f1115`
 - Fondo secundario: `#161a21`
 - Texto principal: `#e6e6eb`
 - Texto secundario: `#9aa0aa`
 - Color de acento: `#4f8cff`
 - Color de éxito: `#3ddc97`
+
+**Tema Claro:**
+- Fondo principal: `#ffffff`
+- Fondo secundario: `#f5f7fa`
+- Texto principal: `#1a1d23`
+- Texto secundario: `#5a6270`
+- Acentos mantienen consistencia
+
+### Accesibilidad
+- ✅ Contraste WCAG AA en todos los elementos
+- ✅ Navegación completa por teclado (Tab, Enter, Espacio)
+- ✅ ARIA labels en iconos interactivos
+- ✅ Focus visible en todos los elementos
+- ✅ Tamaños táctiles mínimos de 44px
+- ✅ Respeta `prefers-reduced-motion`
+
+Ver [ACCESSIBILITY.md](./ACCESSIBILITY.md) para detalles completos.
 
 ## 🔧 Desarrollo
 
