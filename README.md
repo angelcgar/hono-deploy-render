@@ -13,17 +13,26 @@ Acortador de URLs simple y funcional construido con Bun, Hono.js y SQLite.
 
 ```
 .
-├── db.ts              # Módulo de base de datos SQLite
-├── index.ts           # Servidor Hono con rutas API
-├── public/
-│   ├── index.html     # Interfaz de usuario
-│   └── styles.css     # Estilos CSS (dark mode)
-├── .env.example       # Ejemplo de variables de entorno
-├── package.json       # Dependencias y scripts
-├── tsconfig.json      # Configuración TypeScript
-├── urls.db           # Base de datos SQLite (generada automáticamente)
-└── README.md         # Este archivo
+├── src/
+│   ├── server/           # Backend del servidor
+│   │   ├── index.js      # Punto de entrada
+│   │   ├── routes.js     # Definición de rutas
+│   │   └── db.js         # Base de datos SQLite
+│   ├── public/           # Frontend estático
+│   │   ├── index.html    # Interfaz de usuario
+│   │   └── styles.css    # Estilos CSS (dark/light mode)
+│   └── config/           # Configuración
+│       └── env.js        # Variables de entorno
+├── docs/                 # Documentación
+│   ├── database.md       # Esquema de base de datos
+│   └── ARCHITECTURE.md   # Arquitectura del proyecto
+├── .env.example          # Ejemplo de variables de entorno
+├── package.json          # Dependencias y scripts
+├── urls.db              # Base de datos SQLite (generada)
+└── README.md            # Este archivo
 ```
+
+Ver [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) para detalles completos de la arquitectura.
 
 ## ⚙️ Características
 
@@ -207,10 +216,10 @@ bun start
 
 ### Personalización
 
-- **Puerto**: Usar variable de entorno `PORT` o editar en `index.ts`
+- **Puerto**: Usar variable de entorno `PORT` o editar en `src/config/env.js`
 - **BASE_URL**: Usar variable de entorno `BASE_URL` para URLs de producción
-- **Longitud del código**: Modificar `codeLength` en `generateShortCode()` (`index.ts`)
-- **Estilos**: Editar variables CSS en `public/styles.css` (`:root`)
+- **Longitud del código**: Modificar `codeLength` en `generateShortCode()` (`src/server/routes.js`)
+- **Estilos**: Editar variables CSS en `src/public/styles.css` (`:root`)
 - **Colores**: Cambiar la paleta en las variables CSS del archivo `styles.css`
 
 ## 📝 Notas Técnicas
@@ -219,6 +228,8 @@ bun start
 - SQLite crea automáticamente la base de datos `urls.db` en la primera ejecución
 - Las URLs se validan para asegurar que tengan protocolo `http://` o `https://`
 - La UI se actualiza dinámicamente sin recargar la página
+- Arquitectura simple y escalable, ver [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- Esquema de base de datos documentado en [docs/database.md](./docs/database.md)
 
 ## 🔒 Seguridad
 
@@ -228,6 +239,13 @@ bun start
 - Sanitización de entradas
 - HTTPS obligatorio
 - Base de datos externa
+
+## 📚 Documentación Adicional
+
+- [Arquitectura del Proyecto](./docs/ARCHITECTURE.md) - Estructura y flujo de datos
+- [Base de Datos](./docs/database.md) - Esquema y operaciones SQLite
+- [Accesibilidad](./ACCESSIBILITY.md) - Guía de a11y y testing
+- [Cambios Recientes](./CHANGES.md) - Historial de refactorizaciones
 
 ## 📄 Licencia
 
