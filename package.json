@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "bun run --watch src/server/index.ts",
-    "start": "bun run src/server/index.ts"
+    "start": "bun run src/server/index.ts",
+    "test": "bun test src/tests/",
+    "test:watch": "bun test --watch src/tests/"
   },
   "dependencies": {
     "hono": "^4.0.0"

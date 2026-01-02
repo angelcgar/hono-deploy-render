@@ -7,6 +7,7 @@ import {
   insertURL,
   shortCodeExists,
   incrementVisitCount,
+  getStats,
   type URLRecord,
 } from "./db";
 
@@ -76,6 +77,11 @@ export function setupRoutes(app: Hono) {
    */
   app.get("/styles.css", serveStatic({ path: "./src/public/styles.css" }));
 
+  /**
+   * GET /stats - Sirve el dashboard de estadísticas
+   */
+  app.get("/stats", serveStatic({ path: "./src/public/stats.html" }));
+
   // ============================================
   // API ENDPOINTS
   // ============================================
@@ -88,6 +94,16 @@ export function setupRoutes(app: Hono) {
   app.get("/api/urls", (c: Context) => {
     const urls = getAllURLs();
     return c.json(urls);
+  });
+
+  /**
+   * GET /api/stats - Obtiene estadísticas de la aplicación
+   *
+   * Response: { totalURLs, totalVisits, urls }
+   */
+  app.get("/api/stats", (c: Context) => {
+    const stats = getStats();
+    return c.json(stats);
   });
 
   /**

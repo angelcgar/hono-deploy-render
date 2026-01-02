@@ -104,4 +104,23 @@ export function incrementVisitCount(shortCode: string): void {
   query.run(shortCode);
 }
 
+/**
+ * Obtiene estadísticas básicas de la base de datos
+ */
+export function getStats() {
+  const totalURLsQuery = db.query("SELECT COUNT(*) as total FROM urls");
+  const totalVisitsQuery = db.query("SELECT SUM(visit_count) as total FROM urls");
+  const urlsQuery = db.query("SELECT * FROM urls ORDER BY visit_count DESC, created_at DESC");
+
+  const totalURLs = (totalURLsQuery.get() as { total: number }).total;
+  const totalVisits = (totalVisitsQuery.get() as { total: number | null }).total || 0;
+  const urls = urlsQuery.all() as URLRecord[];
+
+  return {
+    totalURLs,
+    totalVisits,
+    urls,
+  };
+}
+
 export default db;
