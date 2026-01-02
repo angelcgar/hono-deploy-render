@@ -1,11 +1,14 @@
+import { Hono, Context } from "hono";
 import { serveStatic } from "hono/bun";
-import { config } from "../config/env.js";
+import { config } from "../config/env";
 import {
   getAllURLs,
   getURLByShortCode,
   insertURL,
   shortCodeExists,
-} from "./db.js";
+  incrementVisitCount,
+  type URLRecord,
+} from "./db";
 
 /**
  * Definición de rutas del servidor
@@ -20,10 +23,10 @@ import {
 
 /**
  * Genera un código corto aleatorio único
- * @returns {string} Código de 6 caracteres alfanuméricos
  */
-function generateShortCode() {
-  const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+function generateShortCode(): string {
+  const characters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   const codeLength = 6;
   let shortCode = "";
 
@@ -41,10 +44,8 @@ function generateShortCode() {
 
 /**
  * Valida si una URL tiene formato correcto
- * @param {string} url - URL a validar
- * @returns {boolean} true si es válida, false si no
  */
-function isValidURL(url) {
+function isValidURL(url: string): boolean {
   try {
     const urlObj = new URL(url);
     return urlObj.protocol === "http:" || urlObj.protocol === "https:";
@@ -59,10 +60,8 @@ function isValidURL(url) {
 
 /**
  * Configura todas las rutas de la aplicación
- * @param {Hono} app - Instancia de Hono
  */
-export function setupRoutes(app) {
-
+export function setupRoutes(app: Hono) {
   // ============================================
   // RUTAS ESTÁTICAS
   // ============================================
@@ -86,7 +85,7 @@ export function setupRoutes(app) {
    *
    * Response: Array de objetos URL
    */
-  app.get("/api/urls", (c) => {
+  app.get("/api/urls", (c: Context) => {
     const urls = getAllURLs();
     return c.json(urls);
   });
@@ -97,23 +96,23 @@ export function setupRoutes(app) {
    * Body: { url: string }
    * Response: { success, short_url, short_code, original_url, created_at }
    */
-  app.post("/api/short", async (c) => {
+  app.post("/api/short", async (c: Context) => {
     try {
       const body = await c.req.json();
       const originalUrl = body.url;
 
       // Validar que se proporcionó una URL
       if (!originalUrl || typeof originalUrl !== "string") {
-        return c.json(
-          { success: false, error: "URL es requerida" },
-          400
-        );
+        return c.json({ success: false, error: "URL es requerida" }, 400);
       }
 
       // Validar formato de URL
       if (!isValidURL(originalUrl)) {
         return c.json(
-          { success: false, error: "URL inválida. Debe incluir http:// o https://" },
+          {
+            success: false,
+            error: "URL inválida. Debe incluir http:// o https://",
+          },
           400
         );
       }
@@ -150,10 +149,10 @@ export function setupRoutes(app) {
   /**
    * GET /:short_code - Redirecciona a la URL original
    *
-   * Busca el código corto en la base de datos y redirecciona
-   * a la URL original con código HTTP 301 (Moved Permanently)
+   * Busca el código corto en la base de datos, incrementa el contador
+   * de visitas y redirecciona a la URL original con código HTTP 301
    */
-  app.get("/:short_code", (c) => {
+  app.get("/:short_code", (c: Context) => {
     const shortCode = c.req.param("short_code");
 
     // Buscar la URL en la base de datos
@@ -162,6 +161,9 @@ export function setupRoutes(app) {
     if (!record) {
       return c.text("URL no encontrada", 404);
     }
+
+    // Incrementar contador de visitas
+    incrementVisitCount(shortCode);
 
     // Redireccionar a la URL original
     return c.redirect(record.original_url, 301);

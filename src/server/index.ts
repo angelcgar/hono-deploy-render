@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { config } from "../config/env.js";
-import { setupRoutes } from "./routes.js";
+import { config } from "../config/env";
+import { setupRoutes } from "./routes";
 
 /**
  * Punto de entrada del servidor
@@ -22,6 +22,8 @@ setupRoutes(app);
 console.log(`🚀 Servidor iniciado en http://localhost:${config.PORT}`);
 console.log(`📝 Interfaz disponible en ${config.BASE_URL}/`);
 console.log(`🔗 URLs acortadas usarán: ${config.BASE_URL}`);
+console.log(`💾 Base de datos: ${config.DB_PATH}`);
+console.log(`🌍 Entorno: ${config.NODE_ENV}`);
 
 // Exportar configuración del servidor para Bun
 export default {
