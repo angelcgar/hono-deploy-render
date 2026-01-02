@@ -80,7 +80,7 @@ export function setupRoutes(app: Hono) {
   /**
    * GET /stats - Sirve el dashboard de estadísticas
    */
-  app.get("/stats", serveStatic({ path: "./src/public/stats.html" }));
+  app.get("/d/stats", serveStatic({ path: "./src/public/stats.html" }));
 
   // ============================================
   // API ENDPOINTS
@@ -104,6 +104,26 @@ export function setupRoutes(app: Hono) {
   app.get("/api/stats", (c: Context) => {
     const stats = getStats();
     return c.json(stats);
+  });
+
+  /**
+   * GET /api/info - Información general de la API
+   *
+   * Response: { name, version, environment, baseUrl, stats }
+   */
+  app.get("/api/info", (c: Context) => {
+    const stats = getStats();
+
+    return c.json({
+      name: "URL Shortener API",
+      version: "1.0.0",
+      environment: process.env.NODE_ENV || "development",
+      baseUrl: config.BASE_URL,
+      stats: {
+        totalUrls: stats.totalURLs,
+        totalVisits: stats.totalVisits,
+      },
+    });
   });
 
   /**
@@ -171,6 +191,9 @@ export function setupRoutes(app: Hono) {
   app.get("/:short_code", (c: Context) => {
     const shortCode = c.req.param("short_code");
 
+    console.log("short_code")
+    console.log(shortCode)
+
     // Buscar la URL en la base de datos
     const record = getURLByShortCode(shortCode);
 
@@ -182,6 +205,6 @@ export function setupRoutes(app: Hono) {
     incrementVisitCount(shortCode);
 
     // Redireccionar a la URL original
-    return c.redirect(record.original_url, 301);
+    return c.redirect(record.original_url, 302);
   });
 }
