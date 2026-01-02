@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acortador de URLs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    input[type="url"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="url"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .result.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .result.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .short-url {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .short-url input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #28a745;
+      border-radius: 6px;
+      background: white;
+      font-family: monospace;
+    }
+
+    .copy-btn {
+      width: auto;
+      padding: 8px 16px;
+      background: #28a745;
+      font-size: 14px;
+    }
+
+    .copy-btn:hover {
+      background: #218838;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .url-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .url-item {
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      transition: transform 0.2s;
+    }
+
+    .url-item:hover {
+      transform: translateX(5px);
+      background: #e9ecef;
+    }
+
+    .url-original {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+      word-break: break-all;
+    }
+
+    .url-short {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .url-short a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      font-family: monospace;
+    }
+
+    .url-short a:hover {
+      text-decoration: underline;
+    }
+
+    .url-date {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(102, 126, 234, 0.3);
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔗 Acortador de URLs</h1>
+    <p class="subtitle">Transforma URLs largas en enlaces cortos y fáciles de compartir</p>
+
+    <!-- Formulario para acortar URL -->
+    <div class="card">
+      <form id="url-form">
+        <div class="form-group">
+          <label for="url-input">Ingresa tu URL</label>
+          <input
+            type="url"
+            id="url-input"
+            placeholder="https://ejemplo.com/una-url-muy-larga-que-quiero-acortar"
+            required
+          >
+        </div>
+        <button type="submit" id="submit-btn">Acortar URL</button>
+      </form>
+
+      <div id="result" class="result"></div>
+    </div>
+
+    <!-- Lista de URLs acortadas -->
+    <div class="card">
+      <h2>📋 URLs Acortadas</h2>
+      <div id="url-list" class="loading">
+        <div class="spinner"></div>
+        <p>Cargando URLs...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // REFERENCIAS AL DOM
+    // ============================================
+    const form = document.getElementById('url-form');
+    const urlInput = document.getElementById('url-input');
+    const submitBtn = document.getElementById('submit-btn');
+    const resultDiv = document.getElementById('result');
+    const urlListDiv = document.getElementById('url-list');
+
+    // ============================================
+    // CARGAR URLs AL INICIAR LA PÁGINA
+    // ============================================
+    async function loadURLs() {
+      try {
+        const response = await fetch('/api/urls');
+        const urls = await response.json();
+
+        renderURLList(urls);
+      } catch (error) {
+        console.error('Error al cargar URLs:', error);
+        urlListDiv.innerHTML = `
+          <div class="empty-state">
+            <p>Error al cargar las URLs</p>
+          </div>
+        `;
+      }
+    }
+
+    // ============================================
+    // RENDERIZAR LISTA DE URLs
+    // ============================================
+    function renderURLList(urls) {
+      if (urls.length === 0) {
+        urlListDiv.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <p>No hay URLs acortadas todavía</p>
+            <p>¡Crea tu primera URL corta arriba!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const listHTML = urls.map(url => {
+        const date = new Date(url.created_at).toLocaleString('es-ES', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="url-item">
+            <div class="url-original">
+              <strong>Original:</strong> ${escapeHtml(url.original_url)}
+            </div>
+            <div class="url-short">
+              <div>
+                <a href="/${url.short_code}" target="_blank">
+                  ${window.location.origin}/${url.short_code}
+                </a>
+              </div>
+              <span class="url-date">${date}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      urlListDiv.innerHTML = `<div class="url-list">${listHTML}</div>`;
+    }
+
+    // ============================================
+    // MANEJAR ENVÍO DEL FORMULARIO
+    // ============================================
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const url = urlInput.value.trim();
+
+      // Validar que la URL no esté vacía
+      if (!url) {
+        showResult('Por favor ingresa una URL', 'error');
+        return;
+      }
+
+      // Deshabilitar el botón mientras se procesa
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Acortando...';
+
+      try {
+        // Enviar la URL al servidor
+        const response = await fetch('/api/short', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Mostrar la URL acortada
+          showResult(
+            `¡URL acortada exitosamente!
+            <div class="short-url">
+              <input type="text" value="${data.short_url}" readonly id="short-url-input">
+              <button class="copy-btn" onclick="copyToClipboard()">Copiar</button>
+            </div>`,
+            'success'
+          );
+
+          // Limpiar el formulario
+          urlInput.value = '';
+
+          // Recargar la lista de URLs
+          await loadURLs();
+        } else {
+          showResult(data.error || 'Error al acortar la URL', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showResult('Error de conexión con el servidor', 'error');
+      } finally {
+        // Rehabilitar el botón
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Acortar URL';
+      }
+    });
+
+    // ============================================
+    // MOSTRAR RESULTADO
+    // ============================================
+    function showResult(message, type) {
+      resultDiv.innerHTML = message;
+      resultDiv.className = `result ${type}`;
+      resultDiv.style.display = 'block';
+
+      // Ocultar el resultado después de 10 segundos (solo para errores)
+      if (type === 'error') {
+        setTimeout(() => {
+          resultDiv.style.display = 'none';
+        }, 10000);
+      }
+    }
+
+    // ============================================
+    // COPIAR AL PORTAPAPELES
+    // ============================================
+    function copyToClipboard() {
+      const input = document.getElementById('short-url-input');
+      input.select();
+      document.execCommand('copy');
+
+      // Feedback visual
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = '¡Copiado!';
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 2000);
+    }
+
+    // ============================================
+    // UTILIDADES
+    // ============================================
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ============================================
+    // INICIALIZAR
+    // ============================================
+    loadURLs();
+  </script>
+</body>
+</html>
