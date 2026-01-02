@@ -16,7 +16,9 @@ Acortador de URLs simple y funcional construido con Bun, Hono.js y SQLite.
 ├── db.ts              # Módulo de base de datos SQLite
 ├── index.ts           # Servidor Hono con rutas API
 ├── public/
-│   └── index.html     # Interfaz de usuario
+│   ├── index.html     # Interfaz de usuario
+│   └── styles.css     # Estilos CSS (dark mode)
+├── .env.example       # Ejemplo de variables de entorno
 ├── package.json       # Dependencias y scripts
 ├── tsconfig.json      # Configuración TypeScript
 ├── urls.db           # Base de datos SQLite (generada automáticamente)
@@ -27,13 +29,12 @@ Acortador de URLs simple y funcional construido con Bun, Hono.js y SQLite.
 
 ✅ Acorta URLs largas en códigos de 6 caracteres
 ✅ Almacenamiento persistente en SQLite
-✅ Interfaz web responsive y moderna
+✅ Interfaz web responsive con **dark mode moderno**
 ✅ Lista de URLs creadas en tiempo real
-✅ Copiar URL corta al portapapeles
+✅ **Icono de copiar junto a cada URL** con feedback visual
 ✅ Redirección automática
 ✅ Validación de URLs
-
-## 🛠️ Instalación y Ejecución
+✅ **Variables de entorno** para PORT y BASE_URL## 🛠️ Instalación y Ejecución
 
 ### Prerrequisitos
 
@@ -41,12 +42,24 @@ Acortador de URLs simple y funcional construido con Bun, Hono.js y SQLite.
 
 ### Pasos
 
-1. **Instalar dependencias**:
+1. **Clonar el repositorio** (opcional):
+```bash
+git clone <repo-url>
+cd hono-deploy-render
+```
+
+2. **Instalar dependencias**:
 ```bash
 bun install
 ```
 
-2. **Ejecutar el servidor**:
+3. **(Opcional) Configurar variables de entorno**:
+```bash
+cp .env.example .env
+# Editar .env si necesitas cambiar PORT o BASE_URL
+```
+
+4. **Ejecutar el servidor**:
 ```bash
 bun run dev
 ```
@@ -56,9 +69,23 @@ O para producción:
 bun start
 ```
 
-3. **Abrir en el navegador**:
+5. **Abrir en el navegador**:
 ```
 http://localhost:3000
+```
+
+## 🔧 Variables de Entorno
+
+El proyecto soporta las siguientes variables de entorno (todas opcionales):
+
+| Variable   | Por defecto             | Descripción                         |
+| ---------- | ----------------------- | ----------------------------------- |
+| `PORT`     | `3000`                  | Puerto donde se ejecuta el servidor |
+| `BASE_URL` | `http://localhost:3000` | URL base para las URLs acortadas    |
+
+**Ejemplo de uso en producción:**
+```bash
+PORT=8080 BASE_URL=https://short.ly bun start
 ```
 
 ## 📡 API Endpoints
@@ -121,11 +148,23 @@ El proyecto usa SQLite con la siguiente estructura:
 
 ## 🎨 Interfaz de Usuario
 
-La UI incluye:
+La UI incluye un **diseño dark mode moderno** con:
 - **Formulario**: Para ingresar URLs largas
 - **Botón de acortar**: Procesa la URL y genera el código corto
 - **Resultado**: Muestra la URL acortada con botón de copiar
-- **Lista**: Muestra todas las URLs creadas con fechas
+- **Lista**: Muestra todas las URLs creadas con:
+  - URL original
+  - URL acortada (clickeable)
+  - **Icono SVG para copiar** cada URL individualmente
+  - Fecha de creación
+
+### Paleta de colores (Dark Mode)
+- Fondo principal: `#0f1115`
+- Fondo secundario: `#161a21`
+- Texto principal: `#e6e6eb`
+- Texto secundario: `#9aa0aa`
+- Color de acento: `#4f8cff`
+- Color de éxito: `#3ddc97`
 
 ## 🔧 Desarrollo
 
@@ -141,9 +180,11 @@ bun start
 
 ### Personalización
 
-- **Puerto**: Cambiar `PORT` en `index.ts` (línea 12)
-- **Longitud del código**: Modificar `codeLength` en `generateShortCode()` (línea 17)
-- **Estilos**: Editar el CSS en `public/index.html`
+- **Puerto**: Usar variable de entorno `PORT` o editar en `index.ts`
+- **BASE_URL**: Usar variable de entorno `BASE_URL` para URLs de producción
+- **Longitud del código**: Modificar `codeLength` en `generateShortCode()` (`index.ts`)
+- **Estilos**: Editar variables CSS en `public/styles.css` (`:root`)
+- **Colores**: Cambiar la paleta en las variables CSS del archivo `styles.css`
 
 ## 📝 Notas Técnicas
 

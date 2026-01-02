@@ -9,8 +9,9 @@ import {
 
 const app = new Hono();
 
-// Configuración del puerto
-const PORT = 3000;
+// Configuración desde variables de entorno con valores por defecto
+const PORT = Number(process.env.PORT) || 3000;
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 /**
  * Genera un código corto aleatorio único
@@ -54,6 +55,11 @@ function isValidURL(url: string): boolean {
 app.get("/", serveStatic({ path: "./public/index.html" }));
 
 /**
+ * GET /styles.css - Sirve el archivo de estilos
+ */
+app.get("/styles.css", serveStatic({ path: "./public/styles.css" }));
+
+/**
  * GET /api/urls - Obtiene todas las URLs guardadas
  */
 app.get("/api/urls", (c) => {
@@ -93,8 +99,8 @@ app.post("/api/short", async (c) => {
     // Guardar en la base de datos
     const record = insertURL(originalUrl, shortCode);
 
-    // Construir la URL completa acortada
-    const shortUrl = `http://localhost:${PORT}/${shortCode}`;
+    // Construir la URL completa acortada usando BASE_URL
+    const shortUrl = `${BASE_URL}/${shortCode}`;
 
     return c.json({
       success: true,
@@ -134,7 +140,8 @@ app.get("/:short_code", (c) => {
 // ============================================
 
 console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
-console.log(`📝 Interfaz disponible en http://localhost:${PORT}/`);
+console.log(`📝 Interfaz disponible en ${BASE_URL}/`);
+console.log(`🔗 URLs acortadas usarán: ${BASE_URL}`);
 
 export default {
   port: PORT,

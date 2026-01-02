@@ -4,237 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acortador de URLs</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: #333;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-
-    h1 {
-      text-align: center;
-      color: white;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-    }
-
-    .subtitle {
-      text-align: center;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 40px;
-      font-size: 1.1rem;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      margin-bottom: 30px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #555;
-    }
-
-    input[type="url"] {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.3s;
-    }
-
-    input[type="url"]:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .result {
-      margin-top: 20px;
-      padding: 16px;
-      border-radius: 8px;
-      display: none;
-    }
-
-    .result.success {
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-      color: #155724;
-    }
-
-    .result.error {
-      background: #f8d7da;
-      border: 1px solid #f5c6cb;
-      color: #721c24;
-    }
-
-    .short-url {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .short-url input {
-      flex: 1;
-      padding: 8px 12px;
-      border: 1px solid #28a745;
-      border-radius: 6px;
-      background: white;
-      font-family: monospace;
-    }
-
-    .copy-btn {
-      width: auto;
-      padding: 8px 16px;
-      background: #28a745;
-      font-size: 14px;
-    }
-
-    .copy-btn:hover {
-      background: #218838;
-    }
-
-    h2 {
-      color: #333;
-      margin-bottom: 20px;
-      font-size: 1.5rem;
-    }
-
-    .url-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .url-item {
-      padding: 16px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 4px solid #667eea;
-      transition: transform 0.2s;
-    }
-
-    .url-item:hover {
-      transform: translateX(5px);
-      background: #e9ecef;
-    }
-
-    .url-original {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 8px;
-      word-break: break-all;
-    }
-
-    .url-short {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .url-short a {
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 600;
-      font-family: monospace;
-    }
-
-    .url-short a:hover {
-      text-decoration: underline;
-    }
-
-    .url-date {
-      font-size: 12px;
-      color: #999;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px;
-      color: #999;
-    }
-
-    .empty-state svg {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 16px;
-      opacity: 0.3;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #999;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(102, 126, 234, 0.3);
-      border-top-color: #667eea;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <div class="container">
@@ -331,10 +101,14 @@
               <strong>Original:</strong> ${escapeHtml(url.original_url)}
             </div>
             <div class="url-short">
-              <div>
+              <div class="url-short-content">
                 <a href="/${url.short_code}" target="_blank">
                   ${window.location.origin}/${url.short_code}
                 </a>
+                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" onclick="copyURLToClipboard('${window.location.origin}/${url.short_code}', this)" title="Copiar URL">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
               </div>
               <span class="url-date">${date}</span>
             </div>
@@ -421,7 +195,7 @@
     }
 
     // ============================================
-    // COPIAR AL PORTAPAPELES
+    // COPIAR AL PORTAPAPELES (Resultado del formulario)
     // ============================================
     function copyToClipboard() {
       const input = document.getElementById('short-url-input');
@@ -434,6 +208,29 @@
       btn.textContent = '¡Copiado!';
       setTimeout(() => {
         btn.textContent = originalText;
+      }, 2000);
+    }
+
+    // ============================================
+    // COPIAR URL INDIVIDUAL DE LA LISTA
+    // ============================================
+    function copyURLToClipboard(url, iconElement) {
+      // Crear input temporal para copiar
+      const tempInput = document.createElement('input');
+      tempInput.value = url;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      // Feedback visual en el icono
+      iconElement.classList.add('copied');
+      const originalTitle = iconElement.getAttribute('title');
+      iconElement.setAttribute('title', '¡Copiado!');
+
+      setTimeout(() => {
+        iconElement.classList.remove('copied');
+        iconElement.setAttribute('title', originalTitle);
       }, 2000);
     }
 
